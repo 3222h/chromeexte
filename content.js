@@ -3,8 +3,10 @@ function getRandomInterval(min, max) {
 }
 
 async function goToYouTubeHome() {
-  const logo = document.querySelector('a#logo');
-  if (logo) logo.click();
+  if (window.location.href !== 'https://www.youtube.com/') {
+    window.location.href = 'https://www.youtube.com/';
+    await waitForVideoToLoad();
+  }
 }
 
 async function playRandomVideo() {
@@ -15,7 +17,6 @@ async function playRandomVideo() {
     randomVideo.click();
     await waitForVideoToLoad();
     await autoPlayVideo();
-    window.dispatchEvent(new MouseEvent('mousemove'));
   }
 }
 
@@ -27,13 +28,14 @@ async function autoPlayVideo() {
   const video = document.querySelector('video');
   if (video && video.paused) {
     video.play();
-    window.dispatchEvent(new MouseEvent('mousemove'));
   }
 }
 
 async function likeVideo() {
   const likeButton = document.querySelector('ytd-toggle-button-renderer #button');
-  if (likeButton && !likeButton.ariaPressed && Math.random() > 0.5) likeButton.click();
+  if (likeButton && likeButton.getAttribute('aria-pressed') === 'false' && Math.random() > 0.5) {
+    likeButton.click();
+  }
 }
 
 async function scrollPage() {
@@ -50,7 +52,6 @@ async function playPauseVideo() {
     video.pause();
     await new Promise(resolve => setTimeout(resolve, getRandomInterval(1000, 3000)));
     video.play();
-    window.dispatchEvent(new MouseEvent('mousemove'));
   }
 }
 
@@ -60,37 +61,28 @@ async function skipVideo(seconds) {
 }
 
 async function browseShorts() {
-  window.location.href = 'https://www.youtube.com/shorts/';
-  await waitForVideoToLoad();
-
-  const shorts = document.querySelectorAll('ytd-reel-video-renderer');
-  for (const short of shorts) {
-    short.click();
+  if (window.location.href !== 'https://www.youtube.com/shorts/') {
+    window.location.href = 'https://www.youtube.com/shorts/';
     await waitForVideoToLoad();
-    await autoPlayVideo();
-    window.dispatchEvent(new MouseEvent('mousemove'));
-    const video = document.querySelector('video');
-    if (video) {
-      const duration = video.duration;
-      const watchTime = duration * (getRandomInterval(40, 60) / 100);
-      await new Promise(resolve => setTimeout(resolve, watchTime * 1000));
-      const likeButton = document.querySelector('ytd-toggle-button-renderer #button');
-      if (likeButton && Math.random() > 0.5) likeButton.click();
-    }
   }
 }
 
 async function loopActions() {
   while (true) {
-    await goToYouTubeHome();
-    await playRandomVideo();
-    await likeVideo();
-    await playPauseVideo();
-    await scrollPage();
-    await skipVideo(getRandomInterval(5, 10));
-    await skipVideo(-getRandomInterval(5, 10));
-    await browseShorts();
+    try {
+      console.log('Starting automation loop...');
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
+      await goToYouTubeHome();
+      await playRandomVideo();
+      await likeVideo();
+      await playPauseVideo();
+      await scrollPage();
+      await skipVideo(getRandomInterval(5, 10));
+      await skipVideo(-getRandomInterval(5, 10));
+      await browseShorts();
+    } catch (error) {
+      console.error('Error in automation loop:', error);
+    }
   }
 }
-
-loopActions();
