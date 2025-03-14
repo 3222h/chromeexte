@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "YouTube Automation Extension",
   "version": "1.0",
-  "permissions": ["activeTab", "scripting", "tabs", "background"],
+  "permissions": ["activeTab", "scripting", "tabs", "storage"],
   "background": {
     "service_worker": "background.js"
   },
@@ -13,6 +13,7 @@
     }
   ],
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
   }
 }
