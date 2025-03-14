@@ -1,4 +1,4 @@
-const manifest = {
+{
   "manifest_version": 3,
   "name": "YouTube Automation Extension",
   "version": "1.0",
@@ -15,4 +15,4 @@ const manifest = {
   "action": {
     "default_popup": "popup.html"
   }
-};
+}
